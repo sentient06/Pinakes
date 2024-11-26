@@ -1,0 +1,1 @@
+/Users/gian/Development/Classic/Retro68-build/toolchain/bin/m68k-apple-macos-gcc -L/usr/local/opt/ruby/lib CMakeFiles/Pinakes.dir/main.c.obj -o Pinakes.code.bin

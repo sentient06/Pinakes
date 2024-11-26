@@ -1,0 +1,4 @@
+/Users/gian/Development/Classic/Pinakes/build/CMakeFiles/Pinakes.dir
+/Users/gian/Development/Classic/Pinakes/build/CMakeFiles/Pinakes_APPL.dir
+/Users/gian/Development/Classic/Pinakes/build/CMakeFiles/edit_cache.dir
+/Users/gian/Development/Classic/Pinakes/build/CMakeFiles/rebuild_cache.dir
