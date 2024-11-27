@@ -14,6 +14,7 @@
 #define MENU_FILE           129
 
 #define WINDOW_ABOUT_ID     128
+#define WINDOW_INTRO_ID     129
 
 // ----------------------------------------------------------------------------
 // Menu resources
@@ -37,6 +38,7 @@ resource 'MENU' (MENU_FILE, preload) {
     AllItems,
     enabled, "File",
     {
+        "Open",                 noicon, "O", nomark, plain;
         "Quit",                 noicon, "Q", nomark, plain
     }
 };
@@ -45,8 +47,9 @@ resource 'MENU' (MENU_FILE, preload) {
 // Windows
 
 resource 'DLOG' (WINDOW_ABOUT_ID, purgeable) {
-    {31, 6, 224, 265},
-    altDBoxProc,
+    // 44 x 28 : 330 x 230
+    {50, 50, 280, 380},
+    noGrowDocProc,
     visible,
     noGoAway,
     0x0,						// No refCon
@@ -55,17 +58,35 @@ resource 'DLOG' (WINDOW_ABOUT_ID, purgeable) {
     1
 };
 
+resource 'WIND' (WINDOW_INTRO_ID, preload, purgeable) {
+      {64, 60, 314, 460},  // initial window size and location
+      zoomDocProc,         // window definition ID: 
+                           // incorporates definition function 
+                           //  and variation code
+      invisible,           // window is initially invisible
+      goAway,              // window has close box
+      0x0,                 // reference constant
+      "untitled",          // window title
+      staggerParentWindowScreen     
+                           // optional positioning specification
+};
+
 resource 'DITL' (WINDOW_ABOUT_ID, purgeable) {
-    {
+    {        
         // Item 1
-        {154,  80, 175, 180}, Button { enabled, "OK" },
+        // Y    X    H    W
+        //          21  100
+        {154+18,  80+37, 175+18, 180+37}, Button { enabled, "OK" },
         // Item 2
-        {  4,  68,  38, 193}, StaticText { disabled, "Pinakes 0.0.0a1\rby Giancarlo Mariot" },
+        {  4+18,  68+37,  38+18, 193+37}, StaticText { disabled, "Pinakes 0.0.0a1\rby Giancarlo Mariot" },
         // Item 3
-        { 86,  11, 102, 250}, StaticText { disabled, "Copyright - 2024 Giancarlo Mariot." },
+        //          16  239
+        { 86+18,  11+37, 102+18, 250+37}, StaticText { disabled, "Copyright - 2024 Giancarlo Mariot." },
         // Item 4
-        { 44, 114,  76, 146}, Icon { disabled, 128 },
+        //          32   32
+        { 44+18, 114+37,  76+18, 146+37}, Icon { disabled, 128 },
         // Item 5
-        {107,  43, 133, 217}, StaticText { disabled, "Written in Retro68" }
+        //          26  174
+        {107+18,  43+37, 133+18, 217+37}, StaticText { disabled, "Written in Retro68" }
     }
 };

@@ -22,9 +22,11 @@
 #define MENU_ABOUT      1
 
 #define MENU_FILE       129 // Menu ID for File menu
-#define MENU_QUIT       1
+#define MENU_OPEN       1
+#define MENU_QUIT       2
 
 #define WINDOW_ABOUT_ID 128
+#define WINDOW_INTRO_ID 129
 
 // ----------------------------------------------------------------------------
 // Globals
@@ -39,11 +41,15 @@ short       gWindowCode;
 #define CHAR_CODE_MASK 255
 
 // ----------------------------------------------------------------------------
-// Blah
+// Prototypes
+
 Boolean PInit(void);
 int PInitBaseWindow();
 void PMainEventLoop(void);
 Boolean PHandleMenu(long mResult);
+
+// ----------------------------------------------------------------------------
+// Functions
 
 /**
  * Handle Menu: Handles menu clicks.
@@ -54,6 +60,7 @@ Boolean PHandleMenu(long mResult) {
   Boolean       quitApp;
   short         refNum;
   DialogPtr     theDialog;
+  WindowPtr     introWindow;
   short         theItem, theMenu;	
   GrafPtr       savePort;
 
@@ -84,6 +91,17 @@ Boolean PHandleMenu(long mResult) {
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     case MENU_FILE:
       switch(theItem) {
+        case MENU_OPEN:
+          introWindow = GetNewWindow(WINDOW_INTRO_ID, NIL, (WindowPtr) IN_FRONT);
+          if (introWindow != NIL) {
+            // Make the window visible
+            ShowWindow(introWindow);
+            // Optional: Select the window 
+            SelectWindow(introWindow);
+          } else {
+            SysBeep(30);
+          }
+          break;
         case MENU_QUIT:
           quitApp = TRUE;
           break;
