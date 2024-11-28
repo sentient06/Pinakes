@@ -1,7 +1,7 @@
 #include <Types.h>
 #include <QuickDraw.h>
 #include <Fonts.h>
-#include <Windows.h>
+#include <MacWindows.h>
 #include <Memory.h>
 #include <Devices.h>
 #include <Events.h>
@@ -32,9 +32,6 @@
 // Globals
 
 Boolean     gUserDone;
-EventRecord gEvent;
-WindowPtr   gWhichWindow;
-short       gWindowCode;
 
 #define LONG_NAP       60L
 #define NO_CURSOR       0L
@@ -43,13 +40,31 @@ short       gWindowCode;
 // ----------------------------------------------------------------------------
 // Prototypes
 
-Boolean PInit(void);
-int PInitBaseWindow();
-void PMainEventLoop(void);
 Boolean PHandleMenu(long mResult);
+Boolean PInit(void);
+
+void POpenIntroWindow(void);
+void PMainEventLoop(void);
 
 // ----------------------------------------------------------------------------
 // Functions
+
+/**
+ * Shows a window.
+ */
+void POpenIntroWindow(void) {
+  WindowPtr     introWindow;
+  
+  introWindow = GetNewWindow(WINDOW_INTRO_ID, NIL, (WindowPtr) IN_FRONT);
+  if (introWindow != NIL) {
+    // Make the window visible
+    ShowWindow(introWindow);
+    // Optional: Select the window 
+    SelectWindow(introWindow);
+  } else {
+    SysBeep(30);
+  }
+}
 
 /**
  * Handle Menu: Handles menu clicks.
@@ -60,7 +75,6 @@ Boolean PHandleMenu(long mResult) {
   Boolean       quitApp;
   short         refNum;
   DialogPtr     theDialog;
-  WindowPtr     introWindow;
   short         theItem, theMenu;	
   GrafPtr       savePort;
 
@@ -92,15 +106,7 @@ Boolean PHandleMenu(long mResult) {
     case MENU_FILE:
       switch(theItem) {
         case MENU_OPEN:
-          introWindow = GetNewWindow(WINDOW_INTRO_ID, NIL, (WindowPtr) IN_FRONT);
-          if (introWindow != NIL) {
-            // Make the window visible
-            ShowWindow(introWindow);
-            // Optional: Select the window 
-            SelectWindow(introWindow);
-          } else {
-            SysBeep(30);
-          }
+          POpenIntroWindow();
           break;
         case MENU_QUIT:
           quitApp = TRUE;
@@ -153,51 +159,67 @@ Boolean PInit(void) {
   return TRUE;
 }
 
-/**
- * Init Base Window: Draw a hello world window that quits on click.
- */
-int PInitBaseWindow() {
-  WindowPtr thisWindow;
-  Rect      windowRect;
+void PHandleMouseDownEvent(EventRecord *eventStrucPtr) {
+  WindowRef      windowRef;
+  WindowPartCode partCode;
 
-  /* Set up the window */
-  windowRect.top    = 40;
-  windowRect.left   = 40;
-  windowRect.bottom = 200;
-  windowRect.right  = 300;
+  partCode = FindWindow(eventStrucPtr->where, &windowRef);
 
-  thisWindow = NewWindow(
-    NIL,
-    &windowRect,
-    "\pHello world",
-    IS_VISIBLE,
-    documentProc,
-    (WindowPtr) IN_FRONT,
-    NO_CLOSE_BOX,
-    NIL
-  );
+  switch(partCode) {
+    case inSysWindow:
+      SystemClick(eventStrucPtr, windowRef);
+      break;
 
-  if (thisWindow != NIL) {
-    SetPort(thisWindow);
-    MoveTo(20, 20);
-    DrawString("\pHello world");
-    InitCursor();
+    case inMenuBar:
+      gUserDone = PHandleMenu(MenuSelect(eventStrucPtr->where));
+      break;
 
-    while(!Button())
-      ;
+    case inDrag:
+      Rect greyRegionRect = (*GetGrayRgn())->rgnBBox; // Create a local copy of the Desktop rect
+      DragWindow(windowRef, eventStrucPtr->where, &greyRegionRect);
+      break;
 
-    DisposeWindow(thisWindow);
-  } else {
-    SysBeep(30);
+    case inGoAway:
+      if(TrackGoAway(windowRef, eventStrucPtr->where) == TRUE) {
+        DisposeWindow(windowRef);
+      }
+      break;
   }
+}
 
-  return 0;
+void PHandleEvents(EventRecord *eventStrucPtr) {
+  switch(eventStrucPtr->what) {
+    case mouseDown:
+      PHandleMouseDownEvent(eventStrucPtr);
+      break;
+
+    // Key down:
+    case keyDown:
+    case autoKey:
+      if ((eventStrucPtr->modifiers & cmdKey) != 0) {
+        gUserDone = PHandleMenu(
+          MenuKey((char) (eventStrucPtr->message & CHAR_CODE_MASK))
+        );
+      }
+      break;
+    
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // Update the window:
+    case updateEvt:
+    // Activate event:
+    case activateEvt:
+      // gWhichWindow = (WindowPtr) eventStrucPtr->message;
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    default:
+      break;
+  }
 }
 
 /**
  * Main Event Loop: Handle all system events.
  */
 void PMainEventLoop(void) {
+  EventRecord eventStructure;
   Point where;
 
   // Clear out leftover events:
@@ -206,42 +228,8 @@ void PMainEventLoop(void) {
   gUserDone = FALSE;
 
   do {
-    if (WaitNextEvent(everyEvent, &gEvent, LONG_NAP, NO_CURSOR)) {
-      switch(gEvent.what) {
-        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        // Mouse down:
-        case mouseDown:
-            gWindowCode = FindWindow(gEvent.where, &gWhichWindow);
-
-            switch(gWindowCode) {
-              case inSysWindow:
-                SystemClick(&gEvent, gWhichWindow);
-                break;
-              case inMenuBar:
-                gUserDone = PHandleMenu(MenuSelect(gEvent.where));
-                break;
-            }
-          break;
-        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        // Key down:
-        case keyDown:
-        case autoKey:
-          if ((gEvent.modifiers & cmdKey) != 0) {
-            gUserDone = PHandleMenu(
-              MenuKey((char) (gEvent.message & CHAR_CODE_MASK))
-            );
-          }
-          break;
-        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        // Update the window:
-        case updateEvt:
-        // Activate event:
-        case activateEvt:
-          gWhichWindow = (WindowPtr) gEvent.message;
-        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        default:
-          break;
-      }
+    if (WaitNextEvent(everyEvent, &eventStructure, LONG_NAP, NO_CURSOR)) {
+      PHandleEvents(&eventStructure);
     } else // Null event
       ;    // Do idle or background stuff here
 
