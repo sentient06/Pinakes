@@ -8,6 +8,9 @@
 #include <ToolUtils.h>
 #include <OSUtils.h>
 #include <Sound.h>
+#include <Resources.h>
+
+#include "LFiles.h"
 
 // ----------------------------------------------------------------------------
 
@@ -22,8 +25,12 @@
 #define MENU_ABOUT      1
 
 #define MENU_FILE       129 // Menu ID for File menu
-#define MENU_OPEN       1
-#define MENU_QUIT       2
+#define MENU_NEW        1
+#define MENU_OPEN       2
+// Open recent          3
+#define MENU_CLOSE      4
+// -------------------- 5
+#define MENU_QUIT       6
 
 #define WINDOW_ABOUT_ID 128
 #define WINDOW_INTRO_ID 129
@@ -31,7 +38,7 @@
 // ----------------------------------------------------------------------------
 // Globals
 
-Boolean     gUserDone;
+Boolean     gShouldQuit;
 
 #define LONG_NAP       60L
 #define NO_CURSOR       0L
@@ -40,7 +47,7 @@ Boolean     gUserDone;
 // ----------------------------------------------------------------------------
 // Prototypes
 
-Boolean PHandleMenu(long mResult);
+Boolean PHandleMenuClick(long mResult);
 Boolean PInit(void);
 
 void POpenIntroWindow(void);
@@ -69,7 +76,7 @@ void POpenIntroWindow(void) {
 /**
  * Handle Menu: Handles menu clicks.
  */
-Boolean PHandleMenu(long mResult) {
+Boolean PHandleMenuClick(long mResult) {
   unsigned char accName[255];
   short         itemHit;
   Boolean       quitApp;
@@ -77,6 +84,11 @@ Boolean PHandleMenu(long mResult) {
   DialogPtr     theDialog;
   short         theItem, theMenu;	
   GrafPtr       savePort;
+
+  const char * fileName = "Macintosh:Documents";
+  bool exists = false;
+  bool isFile = false;
+  bool isDir  = false;
 
   quitApp = FALSE;
   theMenu = HiWord(mResult);
@@ -105,9 +117,18 @@ Boolean PHandleMenu(long mResult) {
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     case MENU_FILE:
       switch(theItem) {
-        case MENU_OPEN:
+        case MENU_NEW:
           POpenIntroWindow();
           break;
+
+        case MENU_OPEN:
+          LFiles::getFileInformation(fileName, &exists, &isFile, &isDir);
+          break;
+
+        case MENU_CLOSE:
+          CloseWindow(FrontWindow());
+          break;
+
         case MENU_QUIT:
           quitApp = TRUE;
           break;
@@ -171,17 +192,26 @@ void PHandleMouseDownEvent(EventRecord *eventStrucPtr) {
       break;
 
     case inMenuBar:
-      gUserDone = PHandleMenu(MenuSelect(eventStrucPtr->where));
+      gShouldQuit = PHandleMenuClick(MenuSelect(eventStrucPtr->where));
       break;
 
-    case inDrag:
-      Rect greyRegionRect = (*GetGrayRgn())->rgnBBox; // Create a local copy of the Desktop rect
-      DragWindow(windowRef, eventStrucPtr->where, &greyRegionRect);
+    case inDrag: {
+        Rect greyRegionRect = (*GetGrayRgn())->rgnBBox; // Create a local copy of the Desktop rect
+        DragWindow(windowRef, eventStrucPtr->where, &greyRegionRect);
+      }
       break;
 
     case inGoAway:
-      if(TrackGoAway(windowRef, eventStrucPtr->where) == TRUE) {
+      if (TrackGoAway(windowRef, eventStrucPtr->where) == TRUE) {
         DisposeWindow(windowRef);
+      }
+      break;
+
+    case inContent:
+      if (windowRef != FrontWindow()) {
+        SelectWindow(windowRef);
+      } else {
+        // PHandleInContentEvent(eventStrucPtr);
       }
       break;
   }
@@ -197,7 +227,7 @@ void PHandleEvents(EventRecord *eventStrucPtr) {
     case keyDown:
     case autoKey:
       if ((eventStrucPtr->modifiers & cmdKey) != 0) {
-        gUserDone = PHandleMenu(
+        gShouldQuit = PHandleMenuClick(
           MenuKey((char) (eventStrucPtr->message & CHAR_CODE_MASK))
         );
       }
@@ -225,7 +255,7 @@ void PMainEventLoop(void) {
   // Clear out leftover events:
   FlushEvents(everyEvent, 0);
 
-  gUserDone = FALSE;
+  gShouldQuit = FALSE;
 
   do {
     if (WaitNextEvent(everyEvent, &eventStructure, LONG_NAP, NO_CURSOR)) {
@@ -233,7 +263,7 @@ void PMainEventLoop(void) {
     } else // Null event
       ;    // Do idle or background stuff here
 
-  } while (gUserDone == FALSE);
+  } while (gShouldQuit == FALSE);
 }
 
 /**

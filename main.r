@@ -38,7 +38,11 @@ resource 'MENU' (MENU_FILE, preload) {
     AllItems,
     enabled, "File",
     {
-        "Open",                 noicon, "O", nomark, plain;
+        "New...",               noicon, "N", nomark, plain;
+        "Open...",              noicon, "O", nomark, plain;
+        "Open recent",          noicon, nokey, nomark, plain;
+        "Close",                noicon, "W", nomark, plain;
+        "-",                    noicon, nokey, nomark, plain;
         "Quit",                 noicon, "Q", nomark, plain
     }
 };
@@ -59,16 +63,16 @@ resource 'DLOG' (WINDOW_ABOUT_ID, purgeable) {
 };
 
 resource 'WIND' (WINDOW_INTRO_ID, preload, purgeable) {
-      {64, 60, 314, 460},  // initial window size and location
-      zoomDocProc,         // window definition ID: 
-                           // incorporates definition function 
-                           //  and variation code
-      invisible,           // window is initially invisible
-      goAway,              // window has close box
-      0x0,                 // reference constant
-      "untitled",          // window title
-      staggerParentWindowScreen     
-                           // optional positioning specification
+    {64, 60, 314, 460}, // initial window size and location
+    zoomDocProc,        // window definition ID: 
+                        // incorporates definition function 
+                        //  and variation code
+    invisible,          // window is initially invisible
+    goAway,             // window has close box
+    0x0,                // reference constant
+    "untitled",         // window title
+    staggerParentWindowScreen     
+                        // optional positioning specification
 };
 
 resource 'DITL' (WINDOW_ABOUT_ID, purgeable) {
