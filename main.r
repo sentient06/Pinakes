@@ -103,7 +103,7 @@ resource 'DITL' (WINDOW_ABOUT_ID, purgeable) {
 
 resource 'DLOG' (2008, "CustomGet-Select Directory", purgeable) {
 	{0, 0, 226, 344},
-	dBoxProc,
+	noGrowDocProc,
 	invisible,
 	noGoAway,
 	0x0,
@@ -189,7 +189,8 @@ resource 'DITL' (2008, "CustomGet-Select Directory", purgeable) {
 };
 
 resource 'dctb' (2008) {
-	{	/* array ColorSpec: 0 elements */
+	{	/* array ColorSpec: 1 elements */
+		/* [1] */
+		wContentColor, 56797, 56797, 56797
 	}
 };
-
