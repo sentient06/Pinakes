@@ -85,10 +85,22 @@ Boolean PHandleMenuClick(long mResult) {
   short         theItem, theMenu;	
   GrafPtr       savePort;
 
+  // StandardGetFolder:
+  StandardFileReply myReply;
+  Point  where;
+  Str255 message = "\pSelect a folder";
+
+  // Centre:
+  where.h = -1;
+  where.v = -1;
+  // -----------------
+
+  // To be used...
   const char * fileName = "Macintosh:Documents";
   bool exists = false;
   bool isFile = false;
   bool isDir  = false;
+  // -------------
 
   quitApp = FALSE;
   theMenu = HiWord(mResult);
@@ -122,7 +134,8 @@ Boolean PHandleMenuClick(long mResult) {
           break;
 
         case MENU_OPEN:
-          LFiles::getFileInformation(fileName, &exists, &isFile, &isDir);
+          // Select folder:
+          LFiles::StandardGetFolder(where, message, &myReply);
           break;
 
         case MENU_CLOSE:
