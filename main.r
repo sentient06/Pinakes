@@ -99,7 +99,7 @@ resource 'DITL' (WINDOW_ABOUT_ID, purgeable) {
 /* Standard Get Folder */
 
 /* Let's not use WINDOW_OPEN_FOLDER yet because 2008 is easy to find. */
-/* Yes! This is the Rez definitions for StandardGetFolder!!! */
+/* Yes! These are the Rez definitions for StandardGetFolder!!! */
 
 resource 'DLOG' (2008, "CustomGet-Select Directory", purgeable) {
 	{0, 0, 226, 344},
