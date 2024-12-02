@@ -136,6 +136,9 @@ Boolean PHandleMenuClick(long mResult) {
         case MENU_OPEN:
           // Select folder:
           LFiles::StandardGetFolder(where, message, &myReply);
+          if (myReply.sfGood) {
+            POpenIntroWindow();
+          }
           break;
 
         case MENU_CLOSE:
