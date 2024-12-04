@@ -10,14 +10,18 @@ REZ    := $(RETRO68)/bin/Rez
 # Libraries
 LIBRARY_LFILES_PATH = ${PWD}/libs/LFiles/lib
 INCLUDE_LFILES_PATH = ${PWD}/libs/LFiles/include
-CFLAGS   := -I$(INCLUDE_LFILES_PATH)
-CXXFLAGS := -I$(INCLUDE_LFILES_PATH)
+CFLAGS   := -I$(INCLUDE_LFILES_PATH) -I${PWD}/src
+CXXFLAGS := -I$(INCLUDE_LFILES_PATH) -I${PWD}/src
 
 # Flags
 # LDFLAGS   := -L${PWD}/libs/LFiles/lib -lLFiles -lRetroConsole
 LDFLAGS   := -lRetroConsole -L$(LIBRARY_LFILES_PATH) -lLFiles 
 RINCLUDES := $(PREFIX)/RIncludes
 REZFLAGS  := -I$(RINCLUDES)
+
+# Source files
+SOURCES := main.cpp src/PIntro.cpp src/PMenu.cpp
+OBJECTS := $(SOURCES:.cpp=.o)
 
 # Targets
 BINARIES := Pinakes.bin Pinakes.APPL Pinakes.dsk
@@ -44,7 +48,7 @@ Pinakes.dsk: Pinakes.flt
 		--cc $@
 
 # Link the object file into the flat binary
-Pinakes.flt: pinakes.o
+Pinakes.flt: $(OBJECTS)
 	$(CXX) -v $< -o $@ $(LDFLAGS)
 
 # C++ used for linking because RetroConsole needs it
@@ -56,7 +60,10 @@ Pinakes.flt: pinakes.o
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+%.o: src/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
 # Clean up generated files
 .PHONY: clean
 clean:
-	rm -f $(BINARIES) Pinakes.flt Pinakes.flt.gdb pinakes.o
+	rm -f $(BINARIES) Pinakes.flt Pinakes.flt.gdb $(OBJECTS)

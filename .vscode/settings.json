@@ -1,5 +1,17 @@
 {
     "files.associations": {
-        "windows.h": "c"
+        "windows.h": "c",
+        "processes.h": "c",
+        "textutils.h": "c",
+        "map": "cpp",
+        "__hash_table": "cpp",
+        "__node_handle": "cpp",
+        "__tree": "cpp",
+        "deque": "cpp",
+        "format": "cpp",
+        "unordered_map": "cpp",
+        "version": "cpp",
+        "system_error": "cpp",
+        "memory": "cpp"
     }
 }

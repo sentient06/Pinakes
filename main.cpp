@@ -10,44 +10,19 @@
 #include <Sound.h>
 #include <Resources.h>
 
+#include "Main.h"
 #include "LFiles.h"
-
-// ----------------------------------------------------------------------------
-
-#define NIL             0L
-#define IN_FRONT        (-1)
-#define IS_VISIBLE      TRUE
-#define NO_CLOSE_BOX    FALSE
-
-#define MENU_BAR_ID     128 // ID for MBAR resource
-
-#define MENU_APPLE      128 // Menu ID for Apple menu
-#define MENU_ABOUT      1
-
-#define MENU_FILE       129 // Menu ID for File menu
-#define MENU_NEW        1
-#define MENU_OPEN       2
-// Open recent          3
-#define MENU_CLOSE      4
-// -------------------- 5
-#define MENU_QUIT       6
-
-#define WINDOW_ABOUT_ID 128
-#define WINDOW_INTRO_ID 129
+#include "src/PMenu.h"
 
 // ----------------------------------------------------------------------------
 // Globals
 
 Boolean     gShouldQuit;
 
-#define LONG_NAP       60L
-#define NO_CURSOR       0L
-#define CHAR_CODE_MASK 255
-
 // ----------------------------------------------------------------------------
 // Prototypes
 
-Boolean PHandleMenuClick(long mResult);
+void PHandleMenuClick(long mResult);
 Boolean PInit(void);
 
 void POpenIntroWindow(void);
@@ -57,29 +32,11 @@ void PMainEventLoop(void);
 // Functions
 
 /**
- * Shows a window.
- */
-void POpenIntroWindow(void) {
-  WindowPtr     introWindow;
-  
-  introWindow = GetNewWindow(WINDOW_INTRO_ID, NIL, (WindowPtr) IN_FRONT);
-  if (introWindow != NIL) {
-    // Make the window visible
-    ShowWindow(introWindow);
-    // Optional: Select the window 
-    SelectWindow(introWindow);
-  } else {
-    SysBeep(30);
-  }
-}
-
-/**
  * Handle Menu: Handles menu clicks.
  */
-Boolean PHandleMenuClick(long mResult) {
+void PHandleMenuClick(long mResult) {
   unsigned char accName[255];
   short         itemHit;
-  Boolean       quitApp;
   short         refNum;
   DialogPtr     theDialog;
   short         theItem, theMenu;	
@@ -102,59 +59,10 @@ Boolean PHandleMenuClick(long mResult) {
   bool isDir  = false;
   // -------------
 
-  quitApp = FALSE;
   theMenu = HiWord(mResult);
   theItem = LoWord(mResult);
 
-  switch(theMenu) {
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    case MENU_APPLE:
-      if (theItem == MENU_ABOUT) {
-        theDialog = GetNewDialog(WINDOW_ABOUT_ID, NIL, (WindowPtr) IN_FRONT);
-        if (theDialog != NIL) {
-          ModalDialog(NIL, &itemHit);
-          DisposeDialog(theDialog);
-        } else {
-          SysBeep(30);
-        }
-      } else {
-        // It's a Desk Accessory:
-        GetPort(&savePort);
-        GetMenuItemText(GetMenuHandle(MENU_APPLE), theItem, accName);
-        refNum = OpenDeskAcc(accName);
-        SetPort(savePort);
-      }
-      break;
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    case MENU_FILE:
-      switch(theItem) {
-        case MENU_NEW:
-          POpenIntroWindow();
-          break;
-
-        case MENU_OPEN:
-          // Select folder:
-          LFiles::StandardGetFolder(where, message, &myReply);
-          if (myReply.sfGood) {
-            POpenIntroWindow();
-          }
-          break;
-
-        case MENU_CLOSE:
-          CloseWindow(FrontWindow());
-          break;
-
-        case MENU_QUIT:
-          quitApp = TRUE;
-          break;
-      }
-      break;
-  }
-  // Switch off highlighting on the menu just used:
-  HiliteMenu(0);
-
-  return quitApp;
+  PMenu::HandleMenuClick(theMenu, theItem);
 }
 
 /**
@@ -208,7 +116,7 @@ void PHandleMouseDownEvent(EventRecord *eventStrucPtr) {
       break;
 
     case inMenuBar:
-      gShouldQuit = PHandleMenuClick(MenuSelect(eventStrucPtr->where));
+      PHandleMenuClick(MenuSelect(eventStrucPtr->where));
       break;
 
     case inDrag: {
@@ -243,7 +151,7 @@ void PHandleEvents(EventRecord *eventStrucPtr) {
     case keyDown:
     case autoKey:
       if ((eventStrucPtr->modifiers & cmdKey) != 0) {
-        gShouldQuit = PHandleMenuClick(
+        PHandleMenuClick(
           MenuKey((char) (eventStrucPtr->message & CHAR_CODE_MASK))
         );
       }
