@@ -42,16 +42,6 @@ void PHandleMenuClick(long mResult) {
   short         theItem, theMenu;	
   GrafPtr       savePort;
 
-  // StandardGetFolder:
-  StandardFileReply myReply;
-  Point  where;
-  Str255 message = "\pSelect a folder";
-
-  // Centre:
-  where.h = -1;
-  where.v = -1;
-  // -----------------
-
   // To be used...
   const char * fileName = "Macintosh:Documents";
   bool exists = false;
