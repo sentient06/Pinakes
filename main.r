@@ -29,8 +29,8 @@ resource 'MENU' (MENU_APPLE, preload) {
     AllItems & ~MenuItem2,	// Disable separator line, enable About Box and DAs
     enabled, apple,
     {
-        "About Pinakes 0.0.0a", noicon, nokey, nomark, plain;
-        "-",                    noicon, nokey, nomark, plain
+        "About Pinax 0.0.0a", noicon, nokey, nomark, plain;
+        "-",                  noicon, nokey, nomark, plain
     }
 };
 
@@ -83,10 +83,10 @@ resource 'DITL' (WINDOW_ABOUT_ID, purgeable) {
         //          21  100
         {154+18,  80+37, 175+18, 180+37}, Button { enabled, "OK" },
         // Item 2
-        {  4+18,  68+37,  38+18, 193+37}, StaticText { disabled, "Pinakes 0.0.0a1\rby Giancarlo Mariot" },
+        {  4+18,  68+37,  38+18, 193+37}, StaticText { disabled, "Pinax 0.0.0a1\rby Giancarlo Mariot" },
         // Item 3
         //          16  239
-        { 86+18,  11+37, 102+18, 250+37}, StaticText { disabled, "Copyright - 2024 Giancarlo Mariot." },
+        { 86+18,  11+37, 102+18, 250+37}, StaticText { disabled, "Copyright - 2025 Giancarlo Mariot." },
         // Item 4
         //          32   32
         { 44+18, 114+37,  76+18, 146+37}, Icon { disabled, 128 },

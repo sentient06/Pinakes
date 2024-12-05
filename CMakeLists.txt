@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(Pinakes)
+project(Pinax)
 
 # Add library path
 
@@ -11,17 +11,17 @@ include_directories(
 )
 link_directories(${CMAKE_SOURCE_DIR}/libs/LFiles/lib)
 
-add_application(Pinakes
+add_application(Pinax
 	main.cpp
 	main.r
 	src/PIntro.cpp
 	src/PMenu.cpp
-	CREATOR "PINX"
+	CREATOR "PinX"
 )
 
 # Link the library
-# target_link_libraries(Pinakes LFiles)
+# target_link_libraries(Pinax LFiles)
 
-target_link_libraries(Pinakes 
+target_link_libraries(Pinax 
 	${CMAKE_SOURCE_DIR}/libs/LFiles/lib/libLFiles.a
 )

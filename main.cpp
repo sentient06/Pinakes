@@ -191,7 +191,7 @@ void PMainEventLoop(void) {
 }
 
 /**
- * Main: Point of entry for Pinakes.
+ * Main: Point of entry for Pinax.
  */
 int main() {
   if (PInit()) {

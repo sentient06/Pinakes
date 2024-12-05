@@ -1,4 +1,4 @@
-# Pinakes
+# Pinax
 
 Nothing to see here.
 

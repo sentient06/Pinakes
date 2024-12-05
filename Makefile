@@ -24,31 +24,31 @@ SOURCES := main.cpp src/PIntro.cpp src/PMenu.cpp
 OBJECTS := $(SOURCES:.cpp=.o)
 
 # Targets
-BINARIES := Pinakes.bin Pinakes.APPL Pinakes.dsk
+BINARIES := Pinax.bin Pinax.APPL Pinax.dsk
 
 all: $(BINARIES)
 
-# Build Pinakes.bin
-Pinakes.bin: Pinakes.flt
+# Build Pinax.bin
+Pinax.bin: Pinax.flt
 	$(REZ) $(REZFLAGS) \
-		-DFLT_FILE_NAME=\"Pinakes.flt\" "$(RINCLUDES)/Retro68APPL.r" \
+		-DFLT_FILE_NAME=\"Pinax.flt\" "$(RINCLUDES)/Retro68APPL.r" \
 		-t APPL -c SWCH \
 		-o $@
 
-# Build Pinakes.APPL
-Pinakes.APPL: Pinakes.flt
+# Build Pinax.APPL
+Pinax.APPL: Pinax.flt
 	$(REZ) $(REZFLAGS) \
-		-DFLT_FILE_NAME=\"Pinakes.flt\" "$(RINCLUDES)/Retro68APPL.r" \
+		-DFLT_FILE_NAME=\"Pinax.flt\" "$(RINCLUDES)/Retro68APPL.r" \
 		--cc $@
 
-# Build Pinakes.dsk
-Pinakes.dsk: Pinakes.flt
+# Build Pinax.dsk
+Pinax.dsk: Pinax.flt
 	$(REZ) $(REZFLAGS) \
-		-DFLT_FILE_NAME=\"Pinakes.flt\" "$(RINCLUDES)/Retro68APPL.r" \
+		-DFLT_FILE_NAME=\"Pinax.flt\" "$(RINCLUDES)/Retro68APPL.r" \
 		--cc $@
 
 # Link the object file into the flat binary
-Pinakes.flt: $(OBJECTS)
+Pinax.flt: $(OBJECTS)
 	$(CXX) -v $< -o $@ $(LDFLAGS)
 
 # C++ used for linking because RetroConsole needs it
@@ -66,4 +66,4 @@ Pinakes.flt: $(OBJECTS)
 # Clean up generated files
 .PHONY: clean
 clean:
-	rm -f $(BINARIES) Pinakes.flt Pinakes.flt.gdb $(OBJECTS)
+	rm -f $(BINARIES) Pinax.flt Pinax.flt.gdb $(OBJECTS)
