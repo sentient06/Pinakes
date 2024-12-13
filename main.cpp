@@ -32,52 +32,41 @@ void PMainEventLoop(void);
 // Functions
 
 /**
- * Handle Menu: Handles menu clicks.
+ * @brief Handles menu clicks.
  */
 void PHandleMenuClick(long mResult) {
-  unsigned char accName[255];
-  short         itemHit;
-  short         refNum;
-  DialogPtr     theDialog;
   short         theItem, theMenu;	
-  GrafPtr       savePort;
-
-  // To be used...
-  const char * fileName = "Macintosh:Documents";
-  bool exists = false;
-  bool isFile = false;
-  bool isDir  = false;
-  // -------------
 
   theMenu = HiWord(mResult);
   theItem = LoWord(mResult);
 
   PMenu::HandleMenuClick(theMenu, theItem);
+  // Small and neat!
 }
 
 /**
- * Init: Initialise libraries.
+ * @brief Initialise libraries.
  */
 Boolean PInit(void) {
   Handle theMenuBar;
 
-  MaxApplZone();
-  MoreMasters();
-  MoreMasters();
-  MoreMasters();
-  MoreMasters();
-  MoreMasters();
-  MoreMasters();
-  MoreMasters();
-  MoreMasters();
+  MaxApplZone(); // 1
+  MoreMasters(); // 2
+  MoreMasters(); // 3
+  MoreMasters(); // 4
+  MoreMasters(); // 5
+  MoreMasters(); // 6
+  MoreMasters(); // 7
+  MoreMasters(); // 8
+  MoreMasters(); // 9 times!
 
-  // Initialise the various managers
+  // Initialise the various managers:
   InitGraf(&qd.thePort); // QuickDraw
   InitFonts();
   FlushEvents(everyEvent, 0); // Clears stray event queues
   InitWindows();
   InitMenus();
-  TEInit();
+  TEInit(); // Text Edit
   InitDialogs(NIL);
 
   // Got our menu resources OK?
@@ -85,7 +74,8 @@ Boolean PInit(void) {
     return FALSE;
   }
 
-  SetMenuBar(theMenuBar); // Add our menus to menu list
+  PMenu::InitMenuHandlers(); // Initialise menu actions
+  SetMenuBar(theMenuBar);    // Add the menus to menu list
   DisposeHandle(theMenuBar);
   AppendResMenu(GetMenuHandle(MENU_APPLE), 'DRVR'); // Build Apple menu
   DrawMenuBar();
@@ -94,6 +84,9 @@ Boolean PInit(void) {
   return TRUE;
 }
 
+/**
+ * @brief Handles mouse click events.
+ */
 void PHandleMouseDownEvent(EventRecord *eventStrucPtr) {
   WindowRef      windowRef;
   WindowPartCode partCode;
@@ -131,6 +124,10 @@ void PHandleMouseDownEvent(EventRecord *eventStrucPtr) {
   }
 }
 
+/**
+ * @brief Handles actions from system events.
+ * @param eventStrucPtr Pointer to event struct.
+ */
 void PHandleEvents(EventRecord *eventStrucPtr) {
   switch(eventStrucPtr->what) {
     case mouseDown:
@@ -160,7 +157,7 @@ void PHandleEvents(EventRecord *eventStrucPtr) {
 }
 
 /**
- * Main Event Loop: Handle all system events.
+ * @brief Handles all system events.
  */
 void PMainEventLoop(void) {
   EventRecord eventStructure;
@@ -181,7 +178,7 @@ void PMainEventLoop(void) {
 }
 
 /**
- * Main: Point of entry for Pinax.
+ * @brief Point of entry for Pinax.
  */
 int main() {
   if (PInit()) {

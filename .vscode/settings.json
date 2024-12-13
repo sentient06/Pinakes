@@ -12,6 +12,12 @@
         "unordered_map": "cpp",
         "version": "cpp",
         "system_error": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "optional": "cpp",
+        "queue": "cpp",
+        "stack": "cpp",
+        "variant": "cpp",
+        "vector": "cpp",
+        "*.tcc": "cpp"
     }
 }

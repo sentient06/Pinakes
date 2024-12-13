@@ -1,6 +1,8 @@
 #include "SysTypes.r"
 #include "Types.r"
 #include "libs/LFiles/include/LFiles.r"
+#include "src/PIntro.r"
+#include "src/PIcons.r"
 
 // 31 flags
 #define AllItems    0b1111111111111111111111111111111
@@ -64,16 +66,16 @@ resource 'DLOG' (WINDOW_ABOUT_ID, purgeable) {
 };
 
 resource 'WIND' (WINDOW_INTRO_ID, preload, purgeable) {
-    {64, 60, 314, 460}, // initial window size and location
-    zoomDocProc,        // window definition ID: 
-                        // incorporates definition function 
-                        //  and variation code
-    invisible,          // window is initially invisible
-    goAway,             // window has close box
-    0x0,                // reference constant
-    "untitled",         // window title
+    {64, 60, 104, 370},   // initial window size and location
+    kWindowFloatSideProc, // window definition ID: 
+                          // incorporates definition function 
+                          //  and variation code
+    invisible,            // window is initially invisible
+    goAway,               // window has close box
+    0x0,                  // reference constant
+    "untitled",           // window title
     staggerParentWindowScreen     
-                        // optional positioning specification
+                          // optional positioning specification
 };
 
 resource 'DITL' (WINDOW_ABOUT_ID, purgeable) {
